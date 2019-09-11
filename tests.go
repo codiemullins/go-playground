@@ -13,7 +13,6 @@ import (
 	"os"
 	"reflect"
 	"strings"
-	"time"
 )
 
 type compileTest struct {
@@ -91,59 +90,59 @@ func main() {
 }
 `, want: "America/New_York"},
 
-	{
-		name: "faketime_works",
-		prog: `
-package main
+	// 	{
+	// 		name: "faketime_works",
+	// 		prog: `
+	// package main
 
-import (
-	"fmt"
-	"time"
-)
+	// import (
+	// 	"fmt"
+	// 	"time"
+	// )
 
-func main() {
-	fmt.Println(time.Now())
-}
-`, want: "2009-11-10 23:00:00 +0000 UTC"},
+	// func main() {
+	// 	fmt.Println(time.Now())
+	// }
+	// `, want: "2009-11-10 23:00:00 +0000 UTC"},
 
-	{
-		name: "faketime_tickers",
-		prog: `
-package main
+	// 	{
+	// 		name: "faketime_tickers",
+	// 		prog: `
+	// package main
 
-import (
-	"fmt"
-	"time"
-)
+	// import (
+	// 	"fmt"
+	// 	"time"
+	// )
 
-func main() {
-	t1 := time.Tick(time.Second * 3)
-	t2 := time.Tick(time.Second * 7)
-	t3 := time.Tick(time.Second * 11)
-	end := time.After(time.Second * 19)
-	want := "112131211"
-	var got []byte
-	for {
-		var c byte
-		select {
-		case <-t1:
-			c = '1'
-		case <-t2:
-			c = '2'
-		case <-t3:
-			c = '3'
-		case <-end:
-			if g := string(got); g != want {
-				fmt.Printf("got %q, want %q\n", g, want)
-			} else {
-				fmt.Println("timers fired as expected")
-			}
-			return
-		}
-		got = append(got, c)
-	}
-}
-`, want: "timers fired as expected"},
+	// func main() {
+	// 	t1 := time.Tick(time.Second * 3)
+	// 	t2 := time.Tick(time.Second * 7)
+	// 	t3 := time.Tick(time.Second * 11)
+	// 	end := time.After(time.Second * 19)
+	// 	want := "112131211"
+	// 	var got []byte
+	// 	for {
+	// 		var c byte
+	// 		select {
+	// 		case <-t1:
+	// 			c = '1'
+	// 		case <-t2:
+	// 			c = '2'
+	// 		case <-t3:
+	// 			c = '3'
+	// 		case <-end:
+	// 			if g := string(got); g != want {
+	// 				fmt.Printf("got %q, want %q\n", g, want)
+	// 			} else {
+	// 				fmt.Println("timers fired as expected")
+	// 			}
+	// 			return
+	// 		}
+	// 		got = append(got, c)
+	// 	}
+	// }
+	// `, want: "timers fired as expected"},
 
 	{
 		name: "old_tour_pkgs_in_gopath",
@@ -350,53 +349,53 @@ func main() {
 }
 `, want: "Main"},
 
-	{
-		name: "stdout_stderr_merge",
-		prog: `
-package main
+	// 	{
+	// 		name: "stdout_stderr_merge",
+	// 		prog: `
+	// package main
 
-import (
-	"fmt"
-	"os"
-)
+	// import (
+	// 	"fmt"
+	// 	"os"
+	// )
 
-func main() {
-	fmt.Fprintln(os.Stdout, "A")
-	fmt.Fprintln(os.Stderr, "B")
-	fmt.Fprintln(os.Stdout, "A")
-	fmt.Fprintln(os.Stdout, "A")
-}
-`, want: "A\nB\nA\nA\n"},
+	// func main() {
+	// 	fmt.Fprintln(os.Stdout, "A")
+	// 	fmt.Fprintln(os.Stderr, "B")
+	// 	fmt.Fprintln(os.Stdout, "A")
+	// 	fmt.Fprintln(os.Stdout, "A")
+	// }
+	// `, want: "A\nB\nA\nA\n"},
 
-	// Integration test for runtime.write fake timestamps.
-	{
-		name: "faketime_write_interaction",
-		prog: `
-package main
+	// 	// Integration test for runtime.write fake timestamps.
+	// 	{
+	// 		name: "faketime_write_interaction",
+	// 		prog: `
+	// package main
 
-import (
-	"fmt"
-	"os"
-	"time"
-)
+	// import (
+	// 	"fmt"
+	// 	"os"
+	// 	"time"
+	// )
 
-func main() {
-	fmt.Fprintln(os.Stdout, "A")
-	fmt.Fprintln(os.Stderr, "B")
-	fmt.Fprintln(os.Stdout, "A")
-	fmt.Fprintln(os.Stdout, "A")
-	time.Sleep(time.Second)
-	fmt.Fprintln(os.Stderr, "B")
-	time.Sleep(time.Second)
-	fmt.Fprintln(os.Stdout, "A")
-}
-`, wantEvents: []Event{
-			{"A\n", "stdout", 0},
-			{"B\n", "stderr", time.Nanosecond},
-			{"A\nA\n", "stdout", time.Nanosecond},
-			{"B\n", "stderr", time.Second - 2*time.Nanosecond},
-			{"A\n", "stdout", time.Second},
-		}},
+	// func main() {
+	// 	fmt.Fprintln(os.Stdout, "A")
+	// 	fmt.Fprintln(os.Stderr, "B")
+	// 	fmt.Fprintln(os.Stdout, "A")
+	// 	fmt.Fprintln(os.Stdout, "A")
+	// 	time.Sleep(time.Second)
+	// 	fmt.Fprintln(os.Stderr, "B")
+	// 	time.Sleep(time.Second)
+	// 	fmt.Fprintln(os.Stdout, "A")
+	// }
+	// `, wantEvents: []Event{
+	// 			{"A\n", "stdout", 0},
+	// 			{"B\n", "stderr", time.Nanosecond},
+	// 			{"A\nA\n", "stdout", time.Nanosecond},
+	// 			{"B\n", "stderr", time.Second - 2*time.Nanosecond},
+	// 			{"A\n", "stdout", time.Second},
+	// 		}},
 
 	{
 		name: "third_party_imports",

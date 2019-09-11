@@ -22,8 +22,8 @@ ARG GO_VERSION=go1.13
 ENV GO_VERSION ${GO_VERSION}
 
 # Fake time
-COPY enable-fake-time.patch /usr/local/playground/
-# Fake file system
+# COPY enable-fake-time.patch /usr/local/playground/
+# # Fake file system
 COPY fake_fs.lst /usr/local/playground/
 
 # Get a bootstrap version of Go for building from source.
@@ -36,7 +36,7 @@ RUN tar --strip=1 -C $GOROOT_BOOTSTRAP -vxzf /tmp/go.tar.gz
 # Fetch Go source for tag $GO_VERSION.
 RUN git clone --depth=1 --branch=$GO_VERSION https://go.googlesource.com/go /usr/local/go
 # Apply the fake time and fake filesystem patches.
-RUN patch /usr/local/go/src/runtime/rt0_nacl_amd64p32.s /usr/local/playground/enable-fake-time.patch
+# RUN patch /usr/local/go/src/runtime/rt0_nacl_amd64p32.s /usr/local/playground/enable-fake-time.patch
 RUN cd /usr/local/go && $GOROOT_BOOTSTRAP/bin/go run misc/nacl/mkzip.go -p syscall /usr/local/playground/fake_fs.lst src/syscall/fstest_nacl.go
 # Build the Go toolchain.
 RUN cd /usr/local/go/src && GOOS=nacl GOARCH=amd64p32 ./make.bash --no-clean
